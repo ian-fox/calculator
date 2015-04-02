@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 class Input {
     public static Expression parse(String arg) {
-        Expression e = new Expression();
         // Check if expression is valid
         if (!arg.matches("[\\d+-/\\*\\^\\(\\)xe [sin][cos][tan][ln][log][pi]]*")) {
+            Expression e = new Expression();
             e.error = true;
             System.out.println("Invalid Input");
             return e;   
@@ -52,8 +52,6 @@ class Input {
                 lastWasNum = true;
             } else if (ops.indexOf(current) != -1) { // Character is an operator or special number
                 if (current == '-' && !lastWasNum  && last != 'p' && last != 'e' && last != 'x') { // Character is a negative sign
-                    System.out.println("Negative");
-                    System.out.println(last == ' ');
                     lastWasNum = true;
                     partial += current;
                 } else {
@@ -61,7 +59,6 @@ class Input {
                     if (s.hasNextFloat()) arr.add(new PartialExp(new Expression(s.nextFloat())));
                     s.close();
                     partial = "";
-                    if ("xep".indexOf(current) != -1 && lastWasNum) arr.add(new PartialExp('*'));
                     if (current == 'x') arr.add(new PartialExp(new Expression()));
                     else if (current == 'p') arr.add(new PartialExp(new Expression(Math.PI)));
                     else if (current == 'e') arr.add(new PartialExp(new Expression(Math.E)));
@@ -81,9 +78,7 @@ class Input {
             arr = simplify(arr);
         }
         
-        e = arr.get(0).exp;
-        
-        return e;
+        return arr.get(0).exp;
     }
     
     private static ArrayList<PartialExp> simplify (ArrayList<PartialExp> arg) {
@@ -99,6 +94,7 @@ class Input {
             }
         }
         
+        // Pi, e
         if (stringArg.indexOf('p') != -1) {
             arg.set(stringArg.indexOf('p'), new PartialExp(new Expression(Math.PI)));
             return arg;
@@ -106,6 +102,12 @@ class Input {
         
         if (stringArg.indexOf('e') != -1) {
             arg.set(stringArg.indexOf('e'), new PartialExp(new Expression(Math.E)));
+            return arg;
+        }
+        
+        // Implied Multiplication
+        if (stringArg.indexOf("##") != -1) {
+            arg.add(stringArg.indexOf("##") + 1, new PartialExp('*'));
             return arg;
         }
         
@@ -172,6 +174,8 @@ class Input {
         
         // Error
         System.out.println("Error"); // TODO: More descriptive error message
+        System.out.println(stringArg);
+        System.exit(0);
         return arg;
     }
 }
