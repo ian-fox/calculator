@@ -7,6 +7,7 @@ class Expression {
     double val;
     boolean error = false;
     String op = "";
+    boolean rightExists;
     
     // Constructors
     public Expression() {} // Default to x
@@ -20,11 +21,13 @@ class Expression {
         left = leftArg;
         right = rightArg;
         op = opArg;
+        rightExists = true;
     }
     
     public Expression(String opArg, Expression arg) {
         left = arg;
         op = opArg;
+        rightExists = false;
     }
         
     public double eval(double x) {
@@ -42,5 +45,21 @@ class Expression {
         case "log": return Math.log(left.eval(x)) / Math.log(right.eval(x));
         }
         return Double.NaN;
+    }
+    
+    public double eval() {
+        return eval(0);
+    }
+    
+    public String toString() {
+        if (isStatic) {
+            return "" + val;
+        } else if (op == "") {
+            return "x";
+        } else if (rightExists) {
+            return left.toString() + op + right.toString();
+        } else {
+            return op + left.toString();
+        }
     }
 }

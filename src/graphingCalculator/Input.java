@@ -6,15 +6,12 @@ import java.util.ArrayList;
 class Input {
     public static Expression parse(String arg) {
         Expression e = new Expression();
-        Scanner s = new Scanner(arg);
         // Check if expression is valid
-        if (s.findInLine("[^\\d+-/\\*\\^\\(\\)x [sin][cos][tan][ln][log]]*") != null) {
+        if (!arg.matches("[\\d+-/\\*\\^\\(\\)xe [sin][cos][tan][ln][log][pi]]*")) {
             e.error = true;
             System.out.println("Invalid Input");
-            s.close();
             return e;   
         }        
-        s.close();
         
         // Convert multi letter operators to single letters for easier parsing
         arg = arg.replaceAll("sin", "s");
@@ -22,71 +19,159 @@ class Input {
         arg = arg.replaceAll("tan", "t");
         arg = arg.replaceAll("log", "g");
         arg = arg.replaceAll("ln", "n");
+        arg = arg.replaceAll("pi", "p");
 
         
         ArrayList<PartialExp> arr = new ArrayList<PartialExp>();
         
-        char current;
+        char current = '\u0000'; // Shouldn't this be the default for char current; ?
+        char last = '\u0000';
         String partial = "";
         boolean pointUsed = false;
         boolean lastWasNum = false;;
         
-        String ops = "+-/*sctgn^()x";
+        String ops = "+-/*sctgn^()xep";
         String nums = "1234567890";
         
+        Scanner s;
+        
         for (int i = 0; i < arg.length(); i++) {
+            if (arg.charAt(i) == ' ') { // ignore whitespace
+                continue;
+            }
+            
+            last = current;
             current = arg.charAt(i);
             
-            if (nums.indexOf(current) != -1) {
+            if (nums.indexOf(current) != -1) { // Character is a digit, add to list of current digits
                 partial += current;
-                lastWasNum = true;
-            } else if (current == '.' && !pointUsed) {
+                lastWasNum = true;                
+            } else if (current == '.' && !pointUsed) { // Character is a point, keep parsing as a float
                 partial += current;
                 pointUsed = true;
                 lastWasNum = true;
-            } else if (ops.indexOf(current) != -1) {
-                if (current == '-' && !lastWasNum) { // Check if - could be a negative sign
+            } else if (ops.indexOf(current) != -1) { // Character is an operator or special number
+                if (current == '-' && !lastWasNum  && last != 'p' && last != 'e' && last != 'x') { // Character is a negative sign
+                    System.out.println("Negative");
+                    System.out.println(last == ' ');
                     lastWasNum = true;
                     partial += current;
                 } else {
                     s = new Scanner(partial);
-                    arr.add(new PartialExp(new Expression(s.nextFloat())));
+                    if (s.hasNextFloat()) arr.add(new PartialExp(new Expression(s.nextFloat())));
                     s.close();
                     partial = "";
-                    if (current == 'x' && lastWasNum) arr.add(new PartialExp('*'));
-                    arr.add(new PartialExp(current));
+                    if ("xep".indexOf(current) != -1 && lastWasNum) arr.add(new PartialExp('*'));
+                    if (current == 'x') arr.add(new PartialExp(new Expression()));
+                    else if (current == 'p') arr.add(new PartialExp(new Expression(Math.PI)));
+                    else if (current == 'e') arr.add(new PartialExp(new Expression(Math.E)));
+                    else arr.add(new PartialExp(current));
                     lastWasNum = false;
                 }
             }
         }
         
+        // Handle trailing numbers
+        s = new Scanner(partial);
+        if (s.hasNextFloat()) arr.add(new PartialExp(new Expression(s.nextFloat())));
+        s.close();
+                        
         // Step through array to create expression
         while (arr.size() > 1) {
             arr = simplify(arr);
         }
         
+        e = arr.get(0).exp;
         
         return e;
     }
     
     private static ArrayList<PartialExp> simplify (ArrayList<PartialExp> arg) {
-        // Parentheses
-        while (arg.contains(')')) {
-            int end = arg.indexOf(')');
-            int start = end;
-            while (arg.get(start).op != '(') {
-                start --;
+        // Convert to string for easier searching for operators
+        int size = arg.size();
+        String stringArg = "";
+        for (int i = 0; i < size; i++) {
+            PartialExp item = arg.get(i);
+            if (item.type.equals("exp")) {
+                stringArg += '#'; // placeholder for an expression
+            } else {
+                stringArg += item.op;
             }
+        }
+        
+        if (stringArg.indexOf('p') != -1) {
+            arg.set(stringArg.indexOf('p'), new PartialExp(new Expression(Math.PI)));
+            return arg;
+        }
+        
+        if (stringArg.indexOf('e') != -1) {
+            arg.set(stringArg.indexOf('e'), new PartialExp(new Expression(Math.E)));
+            return arg;
+        }
+        
+        // System.out.println(stringArg);  
+        
+        // Parentheses
+        if (stringArg.indexOf(')') != -1) {
+            int end = stringArg.indexOf(')');
+            int start = end;
+            while (stringArg.charAt(start) != '(') {
+                start--;
+            }
+            ArrayList<PartialExp> subExp = new ArrayList<PartialExp>();
+            for (int i = start + 1; i < end; i++) {
+                subExp.add(arg.get(i));
+            }
+            
+            // Simplify the part in brackets
+            ArrayList<PartialExp> simplifiedSubExp = simplify(subExp);
+            while (simplifiedSubExp.size() > 1) {
+                simplifiedSubExp = simplify(simplifiedSubExp);
+            }
+            
+            // Remove terms that were simplified from list and add what they compute to
+            for (int i = end; i >= start; i--) {
+                arg.remove(i);
+            }
+            
+            arg.add(start, simplifiedSubExp.get(0));
+            
+            return arg;
         }
         
         // Trig, logs
         
-        // Exponents
+        char[] ops = {'s','c','t','g','n','^','*','/','+','-'};
+        String[] operations = {"sin","cos","tan","log","ln","^","*","/","+","-"};
         
-        // Multipliplation and Divison
+        // One argument
+        for (int i = 0; i < 5; i++) {
+            char op = ops[i];
+            if (stringArg.indexOf(op) != -1) {
+                int index = stringArg.indexOf(op);
+                PartialExp subExp = arg.get(index + 1);
+                arg.remove(index);
+                arg.set(index, new PartialExp(new Expression(operations[i], subExp.exp)));
+                return arg;
+            }
+        }
         
-        // Addition and Subtraction
+        // Two arguments
+        for (int i = 5; i < 10; i++) {
+            char op = ops[i];
+            if (stringArg.indexOf(op) != -1) {
+                int index = stringArg.indexOf(op);
+                PartialExp subExp1 = arg.get(index - 1);
+                PartialExp subExp2 = arg.get(index + 1);
+                arg.remove(index - 1);
+                arg.remove(index - 1);
+                arg.set(index - 1, new PartialExp(new Expression(subExp1.exp, operations[i], subExp2.exp)));
+                return arg;
+            }
+        }
         
+        // Error
+        System.out.println("Error"); // TODO: More descriptive error message
         return arg;
     }
 }
