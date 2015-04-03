@@ -36,7 +36,7 @@ class Input {
         Scanner s;
         
         for (int i = 0; i < arg.length(); i++) {
-            if (arg.charAt(i) == ' ') { // ignore whitespace
+            if (arg.charAt(i) == ' ') { // Ignore whitespace
                 continue;
             }
             
@@ -88,7 +88,7 @@ class Input {
         for (int i = 0; i < size; i++) {
             PartialExp item = arg.get(i);
             if (item.type.equals("exp")) {
-                stringArg += '#'; // placeholder for an expression
+                stringArg += '#'; // Placeholder for an expression
             } else {
                 stringArg += item.op;
             }
@@ -110,9 +110,7 @@ class Input {
             arg.add(stringArg.indexOf("##") + 1, new PartialExp('*'));
             return arg;
         }
-        
-        // System.out.println(stringArg);  
-        
+                
         // Parentheses
         if (stringArg.indexOf(')') != -1) {
             int end = stringArg.indexOf(')');
@@ -141,7 +139,7 @@ class Input {
             return arg;
         }
         
-        // Trig, logs
+        // Other operators
         
         char[] ops = {'s','c','t','g','n','^','*','/','+','-'};
         String[] operations = {"sin","cos","tan","log","ln","^","*","/","+","-"};

@@ -53,11 +53,11 @@ class Expression {
     
     public String toString() {
         if (isStatic) {
-            return "" + val;
+            return Double.toString(val);
         } else if (op == "") {
             return "x";
         } else if (rightExists) {
-            return left.toString() + op + right.toString();
+            return "(" + left.toString() + op + right.toString() + ")";
         } else {
             return op + left.toString();
         }
