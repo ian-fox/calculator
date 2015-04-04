@@ -6,6 +6,13 @@ class Interval {
     boolean infStart = false;
     boolean infEnd = false;
     
+    public Interval (double d) {
+        this.start = d;
+        this.end = d;
+        this.includeStart = true;
+        this.includeEnd = true;
+    }
+    
     public Interval (char inclStart, double start, double end, char inclEnd) {
         this.start = start;
         this.end = end;
