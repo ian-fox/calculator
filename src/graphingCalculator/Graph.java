@@ -21,7 +21,7 @@ class Graph extends JPanel {
         
         // Draw Ticks
         if (useTicks) {
-            Interval interval = tickLines ? new Interval() : new Interval('[', -10 * yUnitsPerPixel, 10 * yUnitsPerPixel, ']');
+            Interval interval = tickLines ? new Interval() : new Interval('[', -5 * yUnitsPerPixel, 5 * yUnitsPerPixel, ']');
             for (double d = xTickInterval * Math.floor(xStart / xTickInterval); d <= xEnd; d += xTickInterval) {
                 drawRelation(new Relation(d, interval), g2d);
             }
