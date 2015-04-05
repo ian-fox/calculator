@@ -4,26 +4,50 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 class Relation {
-    boolean isVertical, isPieceWise, graphDashed, graphDotted;
-    Color c;
+    boolean isPieceWise, graphDashed, graphDotted;
+    Color color = Color.black;
     Interval interval = new Interval();
     char axis = 'x';
     Expression exp;
     ArrayList<Relation> pieces;
     
-    public Relation (Expression exp) {
+    public Relation(Expression exp) {
         this.exp = exp;
     }
     
-    public Relation (Double d) {
-        isVertical = true;
-        interval = new Interval (d);
-    }
-    
-    public Relation (Expression exp, Interval i) {
+    public Relation(Expression exp, Interval i) {
         this.exp = exp;
-        this.interval = i;
+        interval = i;
     }
     
-    // TODO: y-axis relations, piecewise relations, parametric relations
+    public Relation(Expression exp, char axis) {
+        this.exp = exp;
+        this.axis = axis;
+    }
+    
+    public Relation(Expression exp, Interval i, char axis) {
+        this.exp = exp;
+        interval = i;
+        this.axis = axis;
+    }
+    
+    public Relation(double d, Interval i) {
+        exp = new Expression(d);
+        interval = i;
+    }
+    
+    public Relation (double d, Interval i, char axis) {
+        exp = new Expression(d);
+        interval = i;
+        this.axis = axis;
+    }
+    
+    public String toString() {
+        return exp.toString();
+    }
+    
+    public double eval(double d) {
+        return exp.eval(d);
+    }
+    // TODO: piecewise relations, parametric relations
 }

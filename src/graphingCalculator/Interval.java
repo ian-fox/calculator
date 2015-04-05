@@ -13,35 +13,35 @@ class Interval {
         this.includeEnd = true;
     }
     
-    public Interval (char inclStart, double start, double end, char inclEnd) {
+    public Interval(char inclStart, double start, double end, char inclEnd) {
         this.start = start;
         this.end = end;
         includeStart = inclStart == '[';
         includeEnd = inclEnd == ']';
     }
     
-    public Interval (double end, char inclEnd) {
+    public Interval(double end, char inclEnd) {
         this.end = end;
         infStart = true;
         includeStart = false;
         includeEnd = inclEnd == ']';
     }
     
-    public Interval (char inclStart, double start) {
+    public Interval(char inclStart, double start) {
         this.start = start;
         includeStart = inclStart == '[';
         infEnd = true;
         includeEnd = false;
     }
     
-    public Interval () {
+    public Interval() {
         infStart = true;
         includeStart = false;
         infEnd = true;
         includeEnd = false;
     }
     
-    public boolean isInInterval (double d) {
+    public boolean isInInterval(double d) {
         if (infStart && infEnd) return true;
         if (infStart && includeEnd) return d <= end;
         if (infStart) return d < end;
