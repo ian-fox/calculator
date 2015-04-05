@@ -49,5 +49,4 @@ class Relation {
     public double eval(double d) {
         return exp.eval(d);
     }
-    // TODO: piecewise relations, parametric relations
 }
