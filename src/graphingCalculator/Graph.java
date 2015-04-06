@@ -86,7 +86,7 @@ class Graph extends JPanel {
                 } else {
                     useLast = false;
                 }
-            } catch (java.lang.ArithmeticException e) {
+            } catch (java.lang.ArithmeticException e) { // I think this should catch divideby0
                 useLast = false;
                 System.out.println("Error");
             } catch (Error e) {
