@@ -42,7 +42,7 @@ class Expression {
         case "cos": return Math.cos(left.eval(x));
         case "tan": return Math.tan(left.eval(x));
         case "ln": return Math.log(left.eval(x));
-        case "log": return Math.log(left.eval(x)) / Math.log(right.eval(x));
+        case "log": return Math.log10(left.eval(x));
         }
         return Double.NaN;
     }
