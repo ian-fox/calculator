@@ -10,6 +10,7 @@ class Graph extends JPanel {
     boolean useTicks, tickLines;
     ArrayList<Relation> relations = new ArrayList<Relation>();
     int width, height;
+    JFrame frame;
     
     protected void paintComponent(Graphics g) {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -40,7 +41,7 @@ class Graph extends JPanel {
         g2dComponent.drawImage(bufferedImage, null, 0, 0);
     }
     
-    public Graph(int width, int height, double xStart, double yStart, double xEnd, double yEnd, double xTickInterval, double yTickInterval, Relation r) {
+    public Graph(int width, int height, double xStart, double yStart, double xEnd, double yEnd, double xTickInterval, double yTickInterval) {
         useTicks = true;
         this.width = width;
         this.height = height;
@@ -52,15 +53,36 @@ class Graph extends JPanel {
         this.yTickInterval = yTickInterval;
         xUnitsPerPixel = (xEnd - xStart) / width;
         yUnitsPerPixel = (yEnd - yStart) / height;
-        relations.add(r);
         
-        JFrame f = new JFrame();
-        f.setTitle(r.toString());
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(width + 9, height + 38);
-        f.setBackground(Color.white);
-        f.add(this);
-        f.setVisible(true);
+        frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(width + 9, height + 38);
+        frame.setBackground(Color.white);
+        frame.add(this);
+        frame.setVisible(true);
+    }
+    
+    public Graph(int width, int height, double xStart, double yStart, double xEnd, double yEnd, double xTickInterval, double yTickInterval, Relation r) {
+        this(width, height, xStart, yStart, xEnd, yEnd, xTickInterval, yTickInterval);
+        this.relations.add(r);
+        this.frame.setTitle(r.toString());
+        this.frame.repaint();
+    }
+    
+    public Graph(int width, int height, double xStart, double yStart, double xEnd, double yEnd, double xTickInterval, double yTickInterval, Expression e) {
+        this(width, height, xStart, yStart, xEnd, yEnd, xTickInterval, yTickInterval);
+        Relation r = new Relation(e);
+        this.relations.add(r);
+        this.frame.setTitle(r.toString());
+        this.frame.repaint();
+    }
+    
+    public Graph(int width, int height, double xStart, double yStart, double xEnd, double yEnd, double xTickInterval, double yTickInterval, String s) {
+        this(width, height, xStart, yStart, xEnd, yEnd, xTickInterval, yTickInterval);
+        Relation r = new Relation(Input.parse(s));
+        this.relations.add(r);
+        this.frame.setTitle(r.toString());
+        this.frame.repaint();
     }
     
     private void drawRelation(Relation r, Graphics2D g2d) {
