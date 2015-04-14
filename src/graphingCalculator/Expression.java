@@ -29,6 +29,16 @@ class Expression {
         op = opArg;
         rightExists = false;
     }
+    
+    public Expression(String stringArg) {
+        Expression newExp = Input.parse(stringArg);
+        left = newExp.left;
+        right = newExp.right;
+        op = newExp.op;
+        rightExists = newExp.rightExists;
+        isStatic = newExp.isStatic;
+        val = newExp.val;
+    }
         
     public double eval(double x) {
         switch(op) {
@@ -49,6 +59,36 @@ class Expression {
     
     public double eval() {
         return eval(0);
+    }
+    
+    public double integrate(Interval i) {
+        double total = 0;
+        if (i.infEnd || i.infStart) {
+            System.out.println("Integral error: indefinite integral");
+            return Double.NaN;
+        }
+        double step = (i.end - i.start) / 1000;
+        
+        try {
+            for (double d = i.start + step; d < i.end - step; d += step) {
+                    total += this.eval(d);   
+            }
+            total += this.eval(i.start + 0.0001) / 2;
+            total += this.eval(i.end - 0.0001) / 2;
+            
+            total = total * step;
+            
+        } catch (java.lang.ArithmeticException e) {
+            System.out.println("Integral error: Expression is undefined on interval");
+            return Double.NaN;
+        }
+        
+        return total;
+    }
+    
+    public double integrate(String s) {
+        Interval i = new Interval(s);
+        return this.integrate(i);
     }
     
     public String toString() {

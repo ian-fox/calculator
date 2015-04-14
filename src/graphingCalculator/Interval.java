@@ -1,5 +1,7 @@
 package graphingCalculator;
 
+import java.util.Scanner;
+
 class Interval {
     double start, end;
     boolean includeStart, includeEnd;
@@ -39,6 +41,38 @@ class Interval {
         includeStart = false;
         infEnd = true;
         includeEnd = false;
+    }
+    
+    public Interval(String s) {
+        // Test validity
+        if (!s.matches("(?:\\(|\\[)(?:(?:- *inf)|(?:-? *\\d+\\.?\\d*)) *, *(?:(?:inf)|(?:-? *\\d+\\.?\\d*))(?:\\]|\\))")) {
+            infStart = true;
+            infEnd = true;
+            includeStart = false;
+            includeEnd = false;
+            System.out.println("Invalid interval: \"" + s + "\"");
+            return;
+        }
+        
+        includeStart = s.charAt(0) == '(';
+        includeEnd = s.charAt(s.length() - 1) == ')';
+        
+        Scanner sc = new Scanner(s.substring(1).split(",")[0]);
+        if (sc.hasNextDouble()) {
+            start = sc.nextDouble();
+        } else {
+            infStart = true;
+        }
+        sc.close();
+        
+        
+        sc = new Scanner(s.substring(1, s.length() - 1).split(",")[1]);
+        if (sc.hasNextDouble()) {
+            end = sc.nextDouble();
+        } else {
+            infEnd = true;
+        }
+        sc.close();
     }
     
     public boolean isInInterval(double d) {
