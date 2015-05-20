@@ -3,6 +3,8 @@ package graphingCalculator;
 class Expression {
     Expression left;
     Expression right;
+    Expression derivative;
+    Boolean foundDerivative = false;
     boolean isStatic = false;
     double val;
     boolean error = false;
@@ -67,7 +69,7 @@ class Expression {
             System.out.println("Integral error: indefinite integral");
             return Double.NaN;
         }
-        double step = (i.end - i.start) / 1000;
+        double step = (i.end - i.start) / 1000; // How high can I reasonably push this?
         
         try {
             for (double d = i.start + step; d < i.end - step; d += step) {
@@ -91,6 +93,16 @@ class Expression {
         return this.integrate(i);
     }
     
+    public Expression derivative() {
+        if (foundDerivative) return derivative;
+        else {
+            derivative = Derivative.derivative(this);
+            foundDerivative = true;
+            return derivative;
+        }
+    }
+    
+    @Override
     public String toString() {
         if (isStatic) {
             return Double.toString(val);

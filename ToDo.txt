@@ -14,4 +14,4 @@ TODO:
 		-Parametric functions
 	Math
 		-Derivatives
-		-Definite integrals
+

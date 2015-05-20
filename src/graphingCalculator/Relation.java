@@ -49,4 +49,8 @@ class Relation {
     public double eval(double d) {
         return exp.eval(d);
     }
+    
+    public double integrate() {
+        return exp.integrate(interval);
+    }
 }
