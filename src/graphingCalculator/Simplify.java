@@ -2,17 +2,16 @@ package graphingCalculator;
 
 public class Simplify {
     public static Expression simplify(Expression e) {
-        SimplifyTerm t;
+        Expression old;
         do {
-            t = simplifyInternal(new SimplifyTerm(e));
-            e = t.exp;
-        } while (t.reSimplify);
+            old = e;
+            e = simplifyInternal(e);
+        } while (!e.equals(old));
                 
         return e;
     }
     
-    private static SimplifyTerm simplifyInternal(SimplifyTerm s) {
-        Expression e = s.exp;
+    private static Expression simplifyInternal(Expression e) {
 
         // Simplification Cases
         switch(e.op) {
@@ -54,32 +53,15 @@ public class Simplify {
         
         
         // Recursion
-        SimplifyTerm t;
         if (!e.op.equals("")) {
-            t = simplifyInternal(new SimplifyTerm(e.left));
-            e.left = t.exp;
+            e.left = simplifyInternal(e.left);
 
             if (e.rightExists) {
-                t = simplifyInternal(new SimplifyTerm(e.right));
-                e.right = t.exp;
+                e.right = simplifyInternal(e.right);
             }
         }
         
-        s.reSimplify = !e.toString().equals(s.exp.toString()); // if any simplifications were performed, check again
-        //s.reSimplify = !e.equals(s.exp);
         
-        s.exp = e;
-        
-        
-        return s;
-    }
-}
-
-class SimplifyTerm {
-    Expression exp;
-    boolean reSimplify = false;
-    
-    public SimplifyTerm(Expression exp) {
-        this.exp = exp;
+        return e;
     }
 }
