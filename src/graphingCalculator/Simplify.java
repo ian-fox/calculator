@@ -6,13 +6,23 @@ public class Simplify {
         do {
             old = e;
             e = simplifyInternal(e);
+            System.out.println(e);
+            System.out.println(old);
         } while (!e.equals(old));
                 
         return e;
     }
     
     private static Expression simplifyInternal(Expression e) {
+        // Recursion
+        if (!e.op.equals("")) {
+            e.left = simplifyInternal(e.left);
 
+            if (e.rightExists) {
+                e.right = simplifyInternal(e.right);
+            }
+        }
+        
         // Simplification Cases
         switch(e.op) {
         case "*": 
@@ -50,17 +60,6 @@ public class Simplify {
             break;
         default:
         } 
-        
-        
-        // Recursion
-        if (!e.op.equals("")) {
-            e.left = simplifyInternal(e.left);
-
-            if (e.rightExists) {
-                e.right = simplifyInternal(e.right);
-            }
-        }
-        
         
         return e;
     }
