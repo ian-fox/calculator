@@ -53,4 +53,8 @@ class Relation {
     public double integrate() {
         return exp.integrate(interval);
     }
+    
+//    public relation derivative() {
+//        
+//    }
 }
