@@ -6,8 +6,6 @@ public class Simplify {
         do {
             old = e;
             e = simplifyInternal(e);
-            System.out.println(e);
-            System.out.println(old);
         } while (!e.equals(old));
                 
         return e;

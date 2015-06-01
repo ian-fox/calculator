@@ -1,5 +1,5 @@
 package graphingCalculator;
-
+//TODO: parses ((2.0*x)*(0.0+2.0)) as ((2.0*x)*(0.0+20.0)) (bug)
 import java.util.Scanner;
 import java.util.ArrayList;
 
