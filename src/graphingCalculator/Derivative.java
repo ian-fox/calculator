@@ -1,5 +1,4 @@
 package graphingCalculator;
-// TODO: error on derivative of trig
 class Derivative {
     public static Expression derivative(Expression e) {
         if (e.op.equals("")) return e.isStatic ? new Expression(0) : new Expression(1); // term is either a constant or x
@@ -15,7 +14,7 @@ class Derivative {
             e.error = true;
             return e;
         } else {
-            return Simplify.simplify(new Expression(derivativeTerm(e.left), "*", derivative(e.left)));
+            return Simplify.simplify(new Expression(derivativeTerm(e), "*", derivative(e.left)));
         }         
     }
     
