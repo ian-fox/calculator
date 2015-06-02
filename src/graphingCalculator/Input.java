@@ -1,5 +1,4 @@
 package graphingCalculator;
-//TODO: parses ((2.0*x)*(0.0+2.0)) as ((2.0*x)*(0.0+20.0)) (bug)
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -59,6 +58,7 @@ class Input {
                     if (s.hasNextFloat()) arr.add(new PartialExp(new Expression(s.nextFloat())));
                     s.close();
                     partial = "";
+                    pointUsed = false;
                     if (current == 'x') arr.add(new PartialExp(new Expression()));
                     else if (current == 'p') arr.add(new PartialExp(new Expression(Math.PI)));
                     else if (current == 'e') arr.add(new PartialExp(new Expression(Math.E)));

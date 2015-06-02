@@ -6,6 +6,5 @@ public class GraphingCalculator {
         //System.out.println(Derivative.derivative(new Expression("sin(2x)")));
         System.out.println("((2.0*x)*(0.0+2.0))");
         System.out.println(new Expression("((2.0*x)*(0.0+2.0))"));
-        System.out.println(Simplify.simplify(new Expression("((2.0*x)*(0.0+2.0))")));
     }
 }
