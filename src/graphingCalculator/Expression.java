@@ -4,7 +4,6 @@ class Expression {
     Expression left;
     Expression right;
     Expression derivative;
-    Boolean foundDerivative = false;
     boolean isStatic = false;
     double val;
     boolean error = false;
@@ -94,12 +93,8 @@ class Expression {
     }
     
     public Expression derivative() {
-        if (foundDerivative) return derivative;
-        else {
-            derivative = Derivative.derivative(this);
-            foundDerivative = true;
-            return derivative;
-        }
+        if (derivative == null) derivative = Derivative.derivative(this);
+        return derivative;
     }
     
     @Override
