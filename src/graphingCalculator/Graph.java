@@ -1,7 +1,11 @@
 package graphingCalculator;
 
 import java.awt.*;
+
 import javax.swing.*;
+
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -10,11 +14,15 @@ class Graph extends JPanel {
     boolean useTicks, tickLines;
     ArrayList<Relation> relations = new ArrayList<Relation>();
     int width, height;
-    JFrame frame;
+    final JFrame frame;
     
     protected void paintComponent(Graphics g) {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = bufferedImage.createGraphics();
+        
+        // Calculate ratios
+        xUnitsPerPixel = (xEnd - xStart) / width;
+        yUnitsPerPixel = (yEnd - yStart) / height;
         
         // Draw Axes
         drawRelation(new Relation(new Expression(0)), g2d);
@@ -51,14 +59,30 @@ class Graph extends JPanel {
         this.yEnd = yEnd;
         this.xTickInterval = xTickInterval;
         this.yTickInterval = yTickInterval;
-        xUnitsPerPixel = (xEnd - xStart) / width;
-        yUnitsPerPixel = (yEnd - yStart) / height;
         
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(width + 9, height + 38);
         frame.setBackground(Color.white);
+        frame.setTitle("Graph");
         frame.add(this);
+        
+        frame.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                resize(e);
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {}
+
+            @Override
+            public void componentMoved(ComponentEvent e) {}
+
+            @Override
+            public void componentShown(ComponentEvent e) {}
+        });
+        
         frame.setVisible(true);
     }
     
@@ -92,11 +116,11 @@ class Graph extends JPanel {
         int yOld = 0;
         int end = r.axis == 'x' ? width : height;
         for (int i = 0; i < end; i++) {
-            double independent = r.axis == 'x' ? xStart + i * xUnitsPerPixel : yStart + i * yUnitsPerPixel; // using xStart twice, seems wrong
+            double independent = r.axis == 'x' ? xStart + i * xUnitsPerPixel : yStart + i * yUnitsPerPixel;
             try {
                 if (r.interval.isInInterval(independent)) {
-                    int x = r.axis == 'x' ? i : (int) Math.round(-(yStart + r.eval(independent)) / yUnitsPerPixel);
-                    int y = r.axis == 'y' ? i : (int) Math.round(-(xStart + r.eval(independent)) / xUnitsPerPixel);
+                    int x = r.axis == 'x' ? i : (int) Math.round(-(yStart + r.eval(independent)) / xUnitsPerPixel);
+                    int y = r.axis == 'y' ? i : (int) Math.round(-(xStart + r.eval(independent)) / yUnitsPerPixel);
                     if (useLast) {
                         g2d.drawLine(xOld, yOld, x, y);
                     } else {
@@ -115,5 +139,11 @@ class Graph extends JPanel {
                 System.out.println(e);
             }
         }
+    }
+    
+    private void resize(ComponentEvent e) {
+        width = e.getComponent().getWidth() - 9;
+        height = e.getComponent().getHeight() - 38;
+        frame.repaint();
     }
 }
