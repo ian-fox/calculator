@@ -14,7 +14,7 @@ class Graph extends JPanel {
     boolean useTicks, tickLines;
     ArrayList<Relation> relations = new ArrayList<Relation>();
     int width, height;
-    final JFrame frame;
+    JFrame frame;
     
     protected void paintComponent(Graphics g) {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
