@@ -30,10 +30,11 @@ class Graph extends JPanel {
         
         // Draw Ticks
         if (useTicks) {
-            Interval interval = tickLines ? new Interval() : new Interval('[', -5 * yUnitsPerPixel, 5 * yUnitsPerPixel, ']');
+            Interval interval = tickLines ? new Interval() : new Interval('[', -5 * xUnitsPerPixel, 5 * xUnitsPerPixel, ']');
             for (double d = xTickInterval * Math.floor(xStart / xTickInterval); d <= xEnd; d += xTickInterval) {
                 drawRelation(new Relation(d, interval), g2d);
             }
+            interval = tickLines ? new Interval() : new Interval('[', -5 * yUnitsPerPixel, 5 * yUnitsPerPixel, ']');
             for (double d = yTickInterval * Math.floor(yStart / yTickInterval); d < yEnd; d += yTickInterval) {
                 drawRelation(new Relation(d, interval, 'y'), g2d);
             }
@@ -107,6 +108,10 @@ class Graph extends JPanel {
         this.relations.add(r);
         this.frame.setTitle(r.toString());
         this.frame.repaint();
+    }
+    
+    public Graph(Expression e) {
+        this(500, 500, -10, -10, 10, 10, 1, 1, e);
     }
     
     private void drawRelation(Relation r, Graphics2D g2d) {
