@@ -3,6 +3,6 @@ package graphingCalculator;
 
 public class GraphingCalculator {
     public static void main(String[] args) {
-        new Graph(new Expression("sin(2x) + 5").derivative());
+        new Graph("x^2/x");
     }
 }

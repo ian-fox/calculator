@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 class Relation {
-    boolean isPieceWise, graphDashed, graphDotted;
     Color color = Color.black;
     Interval interval = new Interval();
     char axis = 'x';
@@ -54,7 +53,7 @@ class Relation {
         return exp.integrate(interval);
     }
     
-//    public relation derivative() {
-//        
-//    }
+    public Relation derivative() {
+        return new Relation(exp.derivative(), interval);
+    }
 }

@@ -114,10 +114,14 @@ class Graph extends JPanel {
         this(500, 500, -10, -10, 10, 10, 1, 1, e);
     }
     
+    public Graph(String s) {
+        this(new Expression(s));
+    }
+    
     private void drawRelation(Relation r, Graphics2D g2d) {
         g2d.setColor(r.color);
         boolean useLast = false;
-        int xOld = 0; // in theory I think I should be able to say int xOld, but eclipse complained about things not being initialized.
+        int xOld = 0;
         int yOld = 0;
         int end = r.axis == 'x' ? width : height;
         for (int i = 0; i < end; i++) {
@@ -137,7 +141,7 @@ class Graph extends JPanel {
                 } else {
                     useLast = false;
                 }
-            } catch (java.lang.ArithmeticException e) { // I think this should catch divideby0
+            } catch (java.lang.ArithmeticException e) { // divide by 0
                 useLast = false;
                 System.out.println("Error");
             } catch (Error e) {
