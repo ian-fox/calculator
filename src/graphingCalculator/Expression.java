@@ -100,7 +100,7 @@ class Expression {
     @Override
     public String toString() {
         if (isStatic) {
-            return Double.toString(val);
+            return (int) val == val ? Integer.toString((int) val) : Double.toString(val);
         } else if (op == "") {
             return "x";
         } else if (rightExists) {
