@@ -41,6 +41,12 @@ class Relation {
         this.axis = axis;
     }
     
+    public Relation(double d, char axis, Color color) { // asymptote
+        this.color = color;
+        exp = new Expression(d);
+        this.axis = axis;
+    }
+    
     public String toString() {
         return exp.toString();
     }

@@ -41,12 +41,17 @@ class Expression {
         val = newExp.val;
     }
         
-    public double eval(double x) {
+    public double eval(double x) throws java.lang.ArithmeticException {
         switch(op) {
         case "": return isStatic ? val : x;
         case "+": return left.eval(x) + right.eval(x);
         case "-": return left.eval(x) - right.eval(x);
-        case "/": return left.eval(x) / right.eval(x);
+        case "/": if (right.eval(x) != 0) {
+            return left.eval(x) / right.eval(x);
+        } else {
+            if (left.eval(x) == 0) throw new java.lang.ArithmeticException("0 / 0");
+            else throw new java.lang.ArithmeticException("/ by 0");
+        }
         case "*": return left.eval(x) * right.eval(x);
         case "^": return Math.pow(left.eval(x), right.eval(x));
         case "sin": return Math.sin(left.eval(x));

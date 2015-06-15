@@ -126,6 +126,7 @@ class Graph extends JPanel {
         int end = r.axis == 'x' ? width : height;
         for (int i = 0; i < end; i++) {
             double independent = r.axis == 'x' ? xStart + i * xUnitsPerPixel : yStart + i * yUnitsPerPixel;
+            //System.out.println(independent);
             try {
                 if (r.interval.isInInterval(independent)) {
                     int x = r.axis == 'x' ? i : (int) Math.round(-(yStart + r.eval(independent)) / xUnitsPerPixel);
@@ -143,7 +144,14 @@ class Graph extends JPanel {
                 }
             } catch (java.lang.ArithmeticException e) { // divide by 0
                 useLast = false;
-                System.out.println("Error");
+                if (e.getMessage().equals("/ by 0")) { // asymptote
+                    drawRelation(new Relation(independent, r.axis == 'x' ? 'y' : 'x', Color.red), g2d);
+                    g2d.setColor(r.color);
+                } else if (e.getMessage().equals("0 / 0")) { // hole
+                    //TODO: deal with holes
+                } else {
+                    System.out.println(e);
+                }
             } catch (Error e) {
                 System.out.println(e);
             }
