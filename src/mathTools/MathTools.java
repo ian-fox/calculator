@@ -1,8 +1,48 @@
-package graphingCalculator;
-import java.util.Scanner;
-import java.util.ArrayList;
+package mathTools;
 
-class Input {
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+public class MathTools {
+    public static void main(String[] args) {
+        System.out.println(new Expression("x^2").derivative());
+    }
+
+    public static Expression derivative(Expression e) {
+        return MathTools.simplify(MathTools.derivativeInternal(e));
+    }
+
+    private static Expression derivativeInternal(Expression e) {
+        if (e.op.equals("")) return e.isStatic ? new Expression(0) : new Expression(1); // term is either a constant or x
+        
+        if (e.rightExists) {
+            switch(e.op) {
+            case "+": return new Expression(derivativeInternal(e.left), "+", derivativeInternal(e.right));
+            case "-": return new Expression(derivativeInternal(e.left), "-", derivativeInternal(e.right));
+            case "*": return new Expression(new Expression(derivativeInternal(e.left), "*", e.right), "+", new Expression(e.left, "*", derivativeInternal(e.right)));
+            case "/": return new Expression(new Expression(new Expression(derivativeInternal(e.left), "*", e.right), "-", new Expression(e.left, "*", derivativeInternal(e.right))), "/", new Expression(e.right, "^", new Expression(2)));
+            case "^": return new Expression(e.right, "*", new Expression(e.left, "^", new Expression(e.right, "-", new Expression(1))));
+            }
+            e.error = true;
+            return e;
+        } else {
+            return new Expression(MathTools.derivativeTerm(e), "*", derivativeInternal(e.left));
+        }
+    }
+
+    private static Expression derivativeTerm(Expression e) {
+        switch (e.op) {
+        case "sin": return new Expression("cos", e.left);
+        case "cos": return new Expression(new Expression(0), "-", new Expression("sin", e.left));
+        case "tan": return new Expression(new Expression(new Expression(1), "/", new Expression("cos", e.left)), "^", new Expression(2));
+        case "ln": return new Expression(new Expression(1), "/", e.left);
+        case "log": return new Expression(new Expression(1), "/", new Expression(e.left, "*", new Expression("ln", new Expression(10))));
+        }
+        e.error = true;
+        return e;
+    }
+
     public static Expression parse(String arg) {
         // Check if expression is valid
         if (!arg.matches("[\\d+-/\\*\\^\\(\\)xe [sin][cos][tan][ln][log][pi]]*")) {
@@ -19,7 +59,7 @@ class Input {
         arg = arg.replaceAll("log", "g");
         arg = arg.replaceAll("ln", "n");
         arg = arg.replaceAll("pi", "p");
-
+    
         
         ArrayList<PartialExp> arr = new ArrayList<PartialExp>();
         
@@ -75,12 +115,12 @@ class Input {
                         
         // Step through array to create expression
         while (arr.size() > 1) {
-            arr = simplify(arr);
+            arr = MathTools.simplify(arr);
         }
         
         return arr.get(0).exp;
     }
-    
+
     private static ArrayList<PartialExp> simplify (ArrayList<PartialExp> arg) {
         // Convert to string for easier searching for operators
         int size = arg.size();
@@ -171,10 +211,68 @@ class Input {
         }
         
         // Error
-        System.out.println("Error"); // TODO: More descriptive error message
-        System.out.println(stringArg);
-        System.exit(0);
-        return arg;
+        throw new java.lang.AbstractMethodError("Error parsing arg: " + stringArg);
+    }
+
+    public static Expression simplify(Expression e) {
+        Expression old;
+        do {
+            old = e;
+            e = MathTools.simplifyInternal(e);
+        } while (!e.equals(old));
+                
+        return e;
+    }
+
+    private static Expression simplifyInternal(Expression e) {
+        // Recursion
+        if (!e.op.equals("")) {
+            e.left = simplifyInternal(e.left);
+    
+            if (e.rightExists) {
+                e.right = simplifyInternal(e.right);
+            }
+        }
+        
+        // Simplification Cases
+        switch(e.op) {
+        case "*": 
+            if ((e.left.isStatic && e.left.val == 0) || (e.right.isStatic && e.right.val == 0) ) e = new Expression(0);
+            else if (e.left.isStatic && e.right.isStatic) e = new Expression(e.left.val * e.right.val);
+            else if (e.left.isStatic) {
+                if (e.left.val == 1) e = e.right;
+                else if (e.right.op.equals("")) break;
+                else if (e.right.left.isStatic) e = new Expression(new Expression(e.left.val * e.right.left.val), "*", e.right.right);
+                else if (e.right.rightExists) {
+                    if (e.right.right.isStatic) e = new Expression(new Expression(e.left.val * e.right.right.val), "*", e.right.left);
+                }
+            } else if (e.right.isStatic) {
+                if (e.right.val == 1) e = e.left;
+                else if (e.left.op.equals("")) break;
+                else if (e.left.left.isStatic) e = new Expression(new Expression(e.right.val * e.left.left.val), "*", e.left.right);
+                else if (e.left.rightExists) {
+                    if (e.left.right.isStatic) e = new Expression(new Expression(e.right.val * e.left.right.val), "*", e.left.left);
+                }
+            }
+            break;
+        case "+":
+            if (e.left.isStatic && e.left.val == 0) e = e.right;
+            else if (e.right.isStatic && e.right.val == 0) e = e.left;
+            else if (e.left.isStatic && e.right.isStatic) e = new Expression(e.left.val + e.right.val);
+            break;
+        case "-":
+            if (e.right.isStatic && e.right.val == 0) e = e.left;
+            else if (e.left.isStatic && e.right.isStatic) e = new Expression(e.right.val - e.left.val);
+            break;
+        case "/":
+            if (e.left.isStatic && e.left.val == 0) e = new Expression(0);
+            else if (e.right.isStatic && e.right.val == 1) e = e.left;
+            else if (e.right.isStatic && e.left.isStatic) e = new Expression(e.right.val / e.left.val);
+            break;
+        default:
+        } 
+        
+        return e;
     }
 }
 

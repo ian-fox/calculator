@@ -1,4 +1,4 @@
-package graphingCalculator;
+package mathTools;
 
 import java.awt.Color;
 
@@ -26,6 +26,13 @@ class Relation {
         this.exp = exp;
         interval = i;
         this.axis = axis;
+    }
+    
+    public Relation(Expression exp, Interval i, char axis, Color color) {
+        this.exp = exp;
+        interval = i;
+        this.axis = axis;
+        this.color = color;
     }
     
     public Relation(double d, Interval i) {
@@ -58,6 +65,6 @@ class Relation {
     }
     
     public Relation derivative() {
-        return new Relation(exp.derivative(), interval);
+        return new Relation(exp.derivative(), interval, axis, color);
     }
 }

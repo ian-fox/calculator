@@ -1,4 +1,4 @@
-package graphingCalculator;
+package mathTools;
 
 import java.awt.*;
 
@@ -104,7 +104,7 @@ class Graph extends JPanel {
     
     public Graph(int width, int height, double xStart, double yStart, double xEnd, double yEnd, double xTickInterval, double yTickInterval, String s) {
         this(width, height, xStart, yStart, xEnd, yEnd, xTickInterval, yTickInterval);
-        Relation r = new Relation(Input.parse(s));
+        Relation r = new Relation(MathTools.parse(s));
         this.relations.add(r);
         this.frame.setTitle(r.toString());
         this.frame.repaint();

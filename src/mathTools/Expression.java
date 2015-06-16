@@ -1,4 +1,4 @@
-package graphingCalculator;
+package mathTools;
 
 class Expression {
     Expression left;
@@ -32,7 +32,7 @@ class Expression {
     }
     
     public Expression(String stringArg) {
-        Expression newExp = Input.parse(stringArg);
+        Expression newExp = MathTools.parse(stringArg);
         left = newExp.left;
         right = newExp.right;
         op = newExp.op;
@@ -97,7 +97,7 @@ class Expression {
     }
     
     public Expression derivative() {
-        if (derivative == null) derivative = Derivative.derivative(this);
+        if (derivative == null) derivative = MathTools.derivative(this);
         return derivative;
     }
     

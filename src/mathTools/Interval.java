@@ -1,4 +1,4 @@
-package graphingCalculator;
+package mathTools;
 
 import java.util.Scanner;
 
