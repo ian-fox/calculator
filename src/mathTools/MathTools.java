@@ -5,12 +5,8 @@ import java.util.Scanner;
 
 
 public class MathTools {    
-    public static void main(String[] args) {
-        System.out.println(new Expression("x^2").derivative());
-    }
-    
     public static Expression derivative(Expression e) {
-        return MathTools.simplify(MathTools.derivativeInternal(e));
+        return simplify(derivativeInternal(e));
     }
 
     private static Expression derivativeInternal(Expression e) {
@@ -27,7 +23,7 @@ public class MathTools {
             e.error = true;
             return e;
         } else {
-            return new Expression(MathTools.derivativeTerm(e), "*", derivativeInternal(e.left));
+            return new Expression(derivativeTerm(e), "*", derivativeInternal(e.left));
         }
     }
 
@@ -115,7 +111,7 @@ public class MathTools {
                         
         // Step through array to create expression
         while (arr.size() > 1) {
-            arr = MathTools.simplify(arr);
+            arr = simplify(arr);
         }
         
         return arr.get(0).exp;
@@ -218,7 +214,7 @@ public class MathTools {
         Expression old;
         do {
             old = e;
-            e = MathTools.simplifyInternal(e);
+            e = simplifyInternal(e);
         } while (!e.equals(old));
                 
         return e;
@@ -242,16 +238,16 @@ public class MathTools {
             else if (e.left.isStatic) {
                 if (e.left.val == 1) e = e.right;
                 else if (e.right.op.equals("")) break;
-                else if (e.right.left.isStatic) e = new Expression(new Expression(e.left.val * e.right.left.val), "*", e.right.right);
+                else if (e.right.left.isStatic && e.right.op.equals("*")) e = new Expression(new Expression(e.left.val * e.right.left.val), "*", e.right.right);
                 else if (e.right.rightExists) {
-                    if (e.right.right.isStatic) e = new Expression(new Expression(e.left.val * e.right.right.val), "*", e.right.left);
+                    if (e.right.right.isStatic && e.right.op.equals("*")) e = new Expression(new Expression(e.left.val * e.right.right.val), "*", e.right.left);
                 }
             } else if (e.right.isStatic) {
                 if (e.right.val == 1) e = e.left;
                 else if (e.left.op.equals("")) break;
-                else if (e.left.left.isStatic) e = new Expression(new Expression(e.right.val * e.left.left.val), "*", e.left.right);
+                else if (e.left.left.isStatic && e.left.op.equals("*")) e = new Expression(new Expression(e.right.val * e.left.left.val), "*", e.left.right);
                 else if (e.left.rightExists) {
-                    if (e.left.right.isStatic) e = new Expression(new Expression(e.right.val * e.left.right.val), "*", e.left.left);
+                    if (e.left.right.isStatic && e.left.op.equals("*")) e = new Expression(new Expression(e.right.val * e.left.right.val), "*", e.left.left);
                 }
             }
             break;
@@ -262,7 +258,7 @@ public class MathTools {
             break;
         case "-":
             if (e.right.isStatic && e.right.val == 0) e = e.left;
-            else if (e.left.isStatic && e.right.isStatic) e = new Expression(e.right.val - e.left.val);
+            else if (e.left.isStatic && e.right.isStatic) e = new Expression(e.left.val - e.right.val);
             break;
         case "/":
             if (e.left.isStatic && e.left.val == 0) e = new Expression(0);
@@ -271,7 +267,7 @@ public class MathTools {
             break;
         default:
         } 
-        
+
         return e;
     }
 }
