@@ -1,14 +1,12 @@
 package graphingCalculator;
 
 import java.awt.Color;
-import java.util.ArrayList;
 
 class Relation {
     Color color = Color.black;
     Interval interval = new Interval();
     char axis = 'x';
     Expression exp;
-    ArrayList<Relation> pieces;
     
     public Relation(Expression exp) {
         this.exp = exp;
