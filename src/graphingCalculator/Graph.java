@@ -147,8 +147,6 @@ class Graph extends JPanel {
                 if (e.getMessage().equals("/ by 0")) { // asymptote
                     drawRelation(new Relation(independent, r.axis == 'x' ? 'y' : 'x', Color.red), g2d);
                     g2d.setColor(r.color);
-                } else if (e.getMessage().equals("0 / 0")) { // hole
-                    //TODO: deal with holes
                 } else {
                     System.out.println(e);
                 }

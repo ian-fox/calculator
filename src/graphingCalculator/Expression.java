@@ -49,8 +49,7 @@ class Expression {
         case "/": if (right.eval(x) != 0) {
             return left.eval(x) / right.eval(x);
         } else {
-            if (left.eval(x) == 0) throw new java.lang.ArithmeticException("0 / 0");
-            else throw new java.lang.ArithmeticException("/ by 0");
+            throw new java.lang.ArithmeticException("/ by 0");
         }
         case "*": return left.eval(x) * right.eval(x);
         case "^": return Math.pow(left.eval(x), right.eval(x));
