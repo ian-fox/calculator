@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class MathTools {
+public class MathTools {    
     public static void main(String[] args) {
         System.out.println(new Expression("x^2").derivative());
     }
-
+    
     public static Expression derivative(Expression e) {
         return MathTools.simplify(MathTools.derivativeInternal(e));
     }
